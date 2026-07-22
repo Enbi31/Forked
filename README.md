@@ -5,6 +5,7 @@ NYC hackathon project — a modern digital platform.
 ## Project Structure
 
 ```
+<<<<<<< HEAD
 frontend/   - React 19 + Vite 8 + TypeScript frontend
   src/
     pages/          - Route page components
@@ -13,6 +14,10 @@ frontend/   - React 19 + Vite 8 + TypeScript frontend
     App.tsx         - Root component with wouter routing
     main.tsx        - Entry point
 backend/    - Backend API (coming soon)
+=======
+frontend/   - React + Vite + TypeScript frontend (Tailwind CSS, shadcn/ui, Framer Motion)
+backend/    - Python + Groq_api_key
+>>>>>>> 7666ff28e7c719ce98d1c24dd5ada69d84765ad4
 ```
 
 ## Tech Stack
