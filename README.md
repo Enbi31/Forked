@@ -13,7 +13,6 @@ frontend/   - React 19 + Vite 8 + TypeScript frontend
       landing/      - Landing page components (HeroSection, Navbar)
     App.tsx         - Root component with wouter routing
     main.tsx        - Entry point
-backend/    - Backend API (coming soon)
 =======
 frontend/   - React + Vite + TypeScript frontend (Tailwind CSS, shadcn/ui, Framer Motion)
 backend/    - Python + Groq_api_key
