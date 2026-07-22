@@ -18,7 +18,15 @@ frontend/   - React 19 + Vite 8 + TypeScript (Tailwind v4, shadcn, Framer Motion
     App.tsx             - wouter routing (/ → marketing, /app → tool)
     main.tsx            - Entry point (Poppins Medium 500)
     index.css           - Tailwind v4 + shadcn + custom utilities (noise, glass, glow)
-backend/    - Backend API (coming soon)
+backend/    - python
+app/
+pycache
+.env
+ai_service.py
+connection.py
+recommend.py
+main.py
+schema.py
 ```
 
 ## Tech Stack
