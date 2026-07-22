@@ -121,7 +121,7 @@ export default function ForkApp() {
       </nav>
 
       {/* Main content */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 overflow-y-auto w-full pb-10">
+      <div className={`relative z-10 flex-1 flex flex-col items-center px-4 overflow-y-auto w-full ${phase === 'results' ? 'justify-start pt-16 pb-32' : 'justify-center pb-10'}`}>
         <AnimatePresence mode="wait">
           {/* Phase 1: Search */}
           {phase === 'search' && (
