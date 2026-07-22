@@ -82,9 +82,9 @@ export default function ForkApp() {
   const errorInfo = getErrorInfo(error);
 
   return (
-    <main className="fixed inset-0 bg-[#07070B] overflow-hidden flex flex-col">
+    <main className="min-h-screen bg-[#07070B] overflow-x-hidden flex flex-col relative">
       {/* Animated Background Blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <motion.div 
           animate={{ scale: [1, 1.1, 1], opacity: [0.12, 0.18, 0.12] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
@@ -121,7 +121,7 @@ export default function ForkApp() {
       </nav>
 
       {/* Main content */}
-      <div className={`relative z-10 flex-1 flex flex-col items-center px-4 overflow-y-auto w-full ${phase === 'results' ? 'justify-start pt-16 pb-32' : 'justify-center pb-10'}`}>
+      <div className={`relative z-10 flex-1 flex flex-col items-center px-4 w-full ${phase === 'results' ? 'justify-start pt-16 pb-32' : 'justify-center py-20'}`}>
         <AnimatePresence mode="wait">
           {/* Phase 1: Search */}
           {phase === 'search' && (

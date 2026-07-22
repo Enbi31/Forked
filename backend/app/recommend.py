@@ -11,7 +11,8 @@ router = APIRouter()
 @router.post("/recommend", response_model=RecommendationResponse)
 def recommend(data: RecommendationRequest):
     try:
-        logger.info("Recommendation request: category=%s, budget=%d", data.category, data.budget)
+        safe_category = data.category.encode('ascii', 'backslashreplace').decode('ascii')
+        logger.info("Recommendation request: category=%s, budget=%d", safe_category, data.budget)
         result = get_ai_recommendation(data.model_dump())
         if not result.get("products"):
             raise HTTPException(status_code=500, detail="AI failed to generate recommendations")
