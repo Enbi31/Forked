@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class Recommend(BaseModel):
+class RecommendationRequest(BaseModel):
     category : str
     budget : int
     priority :str
