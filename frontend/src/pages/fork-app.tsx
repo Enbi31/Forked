@@ -4,6 +4,7 @@ import StepWizard from '@/components/fork/step-wizard';
 import ComparisonGrid from '@/components/fork/comparison-grid';
 import SelectionModal from '@/components/fork/selection-modal';
 import type { Product } from '@/lib/fork-data';
+import logo from '@/assets/New_Project-Photoroom.png';
 
 type Phase = 'search' | 'steps' | 'results';
 
@@ -46,9 +47,8 @@ export default function ForkApp() {
 
       {/* Top bar */}
       <nav className="relative z-20 flex items-center justify-between px-6 sm:px-10 py-5">
-        <button onClick={restart} className="flex items-center gap-2 text-white font-semibold text-lg cursor-pointer">
-          <span className="text-2xl">⚡</span>
-          <span>Fork</span>
+        <button onClick={restart} className="cursor-pointer">
+          <img src={logo} alt="Forked" className="h-24" />
         </button>
         {phase !== 'search' && (
           <motion.button

@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 
+import logo from '@/assets/New_Project-Photoroom.png';
+
 const ease = [0.16, 1, 0.3, 1];
 const fadeUp = (y = 20, delay = 0) => ({
   initial: { opacity: 0, y },
@@ -15,7 +17,7 @@ const circles = [
 
 export default function HomeHero({ onLaunch }: { onLaunch: () => void }) {
   return (
-    <section className="relative min-h-[90dvh] flex flex-col items-center justify-center text-center px-4 overflow-hidden bg-[#07070B] pt-24 pb-20">
+    <section className="relative min-h-[90dvh] flex flex-col items-center justify-center text-center px-4 overflow-hidden bg-[#07070B] pt-32 pb-20">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_center,#7C3AED_0%,#A855F7_25%,transparent_60%)] opacity-15 pointer-events-none" />
 
       {circles.map((c, i) => (
@@ -27,20 +29,20 @@ export default function HomeHero({ onLaunch }: { onLaunch: () => void }) {
         />
       ))}
 
-      <div className="relative z-10 max-w-3xl mx-auto">
-        <motion.h1
-          {...fadeUp(30)}
-          className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.1]"
-        >
-          Stop endless<br />scrolling.<br />
-          <span className="text-gradient">Start choosing.</span>
-        </motion.h1>
+      <div className="relative z-10 flex flex-col items-center max-w-4xl mx-auto w-full">
+        <motion.div {...fadeUp(30)} className="w-full flex justify-center mb-6">
+          <img 
+            src={logo} 
+            alt="Forked" 
+            className="w-full max-w-xl h-auto" 
+          />
+        </motion.div>
 
         <motion.p
           {...fadeUp(20, 0.2)}
-          className="mt-6 text-lg sm:text-xl text-[#D8CFF8]/70 max-w-xl mx-auto leading-relaxed"
+          className="text-2xl sm:text-3xl md:text-4xl text-white font-medium tracking-wide mt-2"
         >
-          Describe what you're looking for and get 3 perfect options instantly. No more decision fatigue.
+          Every Choice Reduced to 3
         </motion.p>
 
         <motion.div
