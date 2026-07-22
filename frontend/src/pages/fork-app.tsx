@@ -65,18 +65,30 @@ export default function ForkApp() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#07070B] overflow-hidden">
-      {/* Background blobs */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[900px] h-[900px] bg-[radial-gradient(ellipse_at_center,#7C3AED_0%,transparent_65%)] opacity-[0.07]" />
-        <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,#A855F7_0%,transparent_65%)] opacity-[0.05]" />
-        <div className="absolute top-1/2 left-0 -translate-x-1/3 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,#6D28D9_0%,transparent_65%)] opacity-[0.04]" />
+    <main className="fixed inset-0 bg-[#07070B] overflow-hidden flex flex-col">
+      {/* Animated Background Blobs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div 
+          animate={{ scale: [1, 1.1, 1], opacity: [0.12, 0.18, 0.12] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-[radial-gradient(ellipse_at_center,#7C3AED_0%,transparent_65%)] blur-3xl" 
+        />
+        <motion.div 
+          animate={{ x: [0, 40, 0], y: [0, -30, 0], opacity: [0.08, 0.14, 0.08] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+          className="absolute bottom-[-10%] right-[-10%] w-[700px] h-[700px] bg-[radial-gradient(ellipse_at_center,#A855F7_0%,transparent_65%)] blur-[100px]" 
+        />
+        <motion.div 
+          animate={{ x: [0, -40, 0], y: [0, 40, 0], opacity: [0.1, 0.16, 0.1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+          className="absolute top-[30%] left-[-15%] w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,#6D28D9_0%,transparent_65%)] blur-[120px]" 
+        />
       </div>
 
       <div className="noise" />
 
       {/* Top bar */}
-      <nav className="relative z-20 flex items-center justify-between px-6 sm:px-10 py-5">
+      <nav className="relative z-20 shrink-0 flex items-center justify-between px-6 sm:px-10 py-5">
         <button onClick={() => navigate('/')} className="cursor-pointer">
           <img src={logo} alt="Forked" className="h-24" />
         </button>
@@ -92,7 +104,7 @@ export default function ForkApp() {
       </nav>
 
       {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 overflow-y-auto w-full pb-10">
         <AnimatePresence mode="wait">
           {/* Phase 1: Search */}
           {phase === 'search' && (
@@ -102,38 +114,48 @@ export default function ForkApp() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-2xl text-center"
+              className="w-full max-w-3xl text-center"
             >
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.1] mb-4">
-                What are you<br />looking for?
+              <h1 className="text-4xl sm:text-5xl md:text-[4rem] font-bold tracking-tight text-white leading-tight mb-6">
+                What are you looking for?
               </h1>
-              <p className="text-base sm:text-lg text-white/40 mb-12 max-w-md mx-auto">
-                Tell us in plain words. We'll find 3 perfect options for you.
+              <p className="text-base sm:text-lg text-white/50 mb-12 max-w-xl mx-auto font-medium">
+                Tell us in plain words. We'll find exactly 3 perfect options for you.
               </p>
 
-              <form onSubmit={handleSearch} className="w-full">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                    <svg className="w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <form onSubmit={handleSearch} className="w-full relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#7C3AED]/20 to-[#A855F7]/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                
+                <div className="relative flex items-center bg-[#0d0d12] border border-white/[0.08] rounded-2xl p-2 focus-within:border-[#7C3AED]/50 focus-within:ring-1 focus-within:ring-[#7C3AED]/50 transition-all duration-300 shadow-2xl">
+                  <div className="pl-4 flex items-center pointer-events-none">
+                    <svg className="w-6 h-6 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
+                  
                   <input
                     type="text"
                     value={query}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-                    placeholder="e.g. Laptop for JEE prep and light gaming"
-                    className="w-full pl-14 pr-5 py-5 bg-white/[0.04] border border-white/[0.08] rounded-2xl text-white placeholder-white/25 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/40 focus:border-[#7C3AED]/40 transition-all"
+                    placeholder="A fast laptop for coding under ₹60k..."
+                    className="flex-1 bg-transparent border-none text-white placeholder-white/25 text-base sm:text-lg px-4 py-4 focus:outline-none focus:ring-0"
                   />
+                  
+                  <button
+                    type="submit"
+                    disabled={!query.trim()}
+                    className={`ml-2 p-3 sm:px-6 sm:py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                      query.trim() 
+                        ? 'bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:scale-[1.02] cursor-pointer' 
+                        : 'bg-white/5 text-white/30 cursor-not-allowed'
+                    }`}
+                  >
+                    <span className="hidden sm:inline">Find 3 options</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </button>
                 </div>
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="mt-6 px-10 py-4 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] hover:from-[#8B4AF7] hover:to-[#B565F7] text-white font-semibold rounded-xl glow-button transition-all duration-300 cursor-pointer"
-                >
-                  Find my 3 options →
-                </motion.button>
               </form>
             </motion.div>
           )}
