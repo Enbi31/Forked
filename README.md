@@ -22,7 +22,7 @@ backend/    - python
 app/
 pycache
 .env
-ai_service.py
+ai_service.py - Groq api along with Buying link
 connection.py
 recommend.py
 main.py
