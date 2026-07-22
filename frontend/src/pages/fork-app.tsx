@@ -13,13 +13,13 @@ import logo from '@/assets/New_Project-Photoroom.png';
 type Phase = 'search' | 'steps' | 'loading' | 'results' | 'error';
 
 function getErrorInfo(message: string): { title: string; suggestion: string } {
-  if (message instanceof TimeoutError || message === 'Request timed out. The AI service is taking too long to respond.') {
+  if (message === 'Request timed out. The AI service is taking too long to respond.') {
     return { title: 'Request timed out', suggestion: 'The AI service is taking longer than usual. Please try again.' };
   }
-  if (typeof message === 'string' && message.includes('Network')) {
+  if (message.includes('Network')) {
     return { title: 'Connection error', suggestion: 'Could not reach the server. Check your internet connection and try again.' };
   }
-  if (typeof message === 'string' && message.includes('API error 429')) {
+  if (message.includes('API error 429')) {
     return { title: 'Too many requests', suggestion: 'The AI service is rate-limited. Please wait a moment and try again.' };
   }
   return { title: "Couldn't get recommendations", suggestion: 'The AI service is temporarily unavailable. Please try again.' };
