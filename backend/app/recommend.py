@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from schema import RecommendationRequest
-from ai_service import get_ai_recommendation
+from app.schema import RecommendationRequest
+from app.ai_service import get_ai_recommendation
 
 router = APIRouter()
 
