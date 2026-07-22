@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import HeroSection from '@/components/landing/herosection';
 import FilterBar from '@/components/fork/filter-bar';
+import ComparisonGrid from '@/components/fork/comparison-grid';
+import SelectionModal from '@/components/fork/selection-modal';
+import type { Product } from '@/lib/fork-data';
 
-export default function Home() {
+export default function ForkApp() {
   const [searched, setSearched] = useState(false);
   const [filters, setFilters] = useState<Record<string, string[]>>({
     price: [],
     utility: [],
     feature: [],
   });
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const handleSearch = () => {
     setSearched(true);
@@ -25,8 +29,14 @@ export default function Home() {
       {searched && (
         <section className="max-w-6xl mx-auto px-4 pb-16">
           <FilterBar filters={filters} onFilterChange={handleFilterChange} />
+          <ComparisonGrid filters={filters} onSelect={setSelectedProduct} />
         </section>
       )}
+
+      <SelectionModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </main>
   );
 }

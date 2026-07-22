@@ -1,11 +1,11 @@
 import { Router, Route, Switch } from 'wouter';
-import Home from './pages/home';
+import ForkApp from './pages/fork-app';
 
 function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/" component={Home} />
+        <Route path="/" component={ForkApp} />
       </Switch>
     </Router>
   );
