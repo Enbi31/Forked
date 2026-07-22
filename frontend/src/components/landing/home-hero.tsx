@@ -30,7 +30,7 @@ export default function HomeHero({ onLaunch }: { onLaunch: () => void }) {
       ))}
 
       <div className="relative z-10 flex flex-col items-center max-w-4xl mx-auto w-full">
-        <motion.div {...fadeUp(30)} className="w-full flex justify-center mb-6">
+        <motion.div {...fadeUp(30)} className="w-full flex justify-center mb-0">
           <img 
             src={logo} 
             alt="Forked" 
@@ -40,7 +40,7 @@ export default function HomeHero({ onLaunch }: { onLaunch: () => void }) {
 
         <motion.p
           {...fadeUp(20, 0.2)}
-          className="text-2xl sm:text-3xl md:text-4xl text-white font-medium tracking-wide mt-2"
+          className="text-2xl sm:text-3xl md:text-4xl text-[#D8CFF8]/60 font-medium tracking-wide mt-1"
         >
           Every Choice Reduced to 3
         </motion.p>
