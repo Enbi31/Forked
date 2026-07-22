@@ -4,12 +4,26 @@ import { useLocation } from 'wouter';
 import StepWizard from '@/components/fork/step-wizard';
 import ComparisonGrid from '@/components/fork/comparison-grid';
 import SelectionModal from '@/components/fork/selection-modal';
+import SkeletonCard from '@/components/fork/skeleton-card';
 import type { Product } from '@/lib/fork-data';
-import { fetchRecommendations } from '@/lib/api';
+import { fetchRecommendations, TimeoutError } from '@/lib/api';
 import { mapAPIProducts } from '@/lib/mapper';
 import logo from '@/assets/New_Project-Photoroom.png';
 
 type Phase = 'search' | 'steps' | 'loading' | 'results' | 'error';
+
+function getErrorInfo(message: string): { title: string; suggestion: string } {
+  if (message instanceof TimeoutError || message === 'Request timed out. The AI service is taking too long to respond.') {
+    return { title: 'Request timed out', suggestion: 'The AI service is taking longer than usual. Please try again.' };
+  }
+  if (typeof message === 'string' && message.includes('Network')) {
+    return { title: 'Connection error', suggestion: 'Could not reach the server. Check your internet connection and try again.' };
+  }
+  if (typeof message === 'string' && message.includes('API error 429')) {
+    return { title: 'Too many requests', suggestion: 'The AI service is rate-limited. Please wait a moment and try again.' };
+  }
+  return { title: "Couldn't get recommendations", suggestion: 'The AI service is temporarily unavailable. Please try again.' };
+}
 
 export default function ForkApp() {
   const [, navigate] = useLocation();
@@ -50,7 +64,8 @@ export default function ForkApp() {
 
       setPhase('results');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
       setPhase('error');
     }
   };
@@ -63,6 +78,8 @@ export default function ForkApp() {
     setError('');
     setLastSelections({});
   };
+
+  const errorInfo = getErrorInfo(error);
 
   return (
     <main className="fixed inset-0 bg-[#07070B] overflow-hidden flex flex-col">
@@ -90,7 +107,7 @@ export default function ForkApp() {
       {/* Top bar */}
       <nav className="relative z-20 shrink-0 flex items-center justify-between px-6 sm:px-10 py-5">
         <button onClick={() => navigate('/')} className="cursor-pointer">
-          <img src={logo} alt="Forked" className="h-24" />
+          <img src={logo} alt="Forked" className="h-18" />
         </button>
         {phase !== 'search' && (
           <motion.button
@@ -182,14 +199,22 @@ export default function ForkApp() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-2xl mx-auto text-center"
+              className="w-full max-w-6xl mx-auto"
+              role="status"
+              aria-live="polite"
             >
-              <div className="flex flex-col items-center gap-6">
-                <div className="w-12 h-12 border-2 border-[#A855F7] border-t-transparent rounded-full animate-spin" />
-                <div>
-                  <p className="text-white/80 text-lg font-medium">Finding the best options for you...</p>
-                  <p className="text-white/30 text-sm mt-1">This usually takes just a few seconds.</p>
-                </div>
+              <div className="text-center mb-10">
+                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                  Finding your <span className="text-gradient">3 Options</span>
+                </h2>
+                <p className="text-white/40 text-sm sm:text-base">
+                  Our AI is analyzing the best picks for you...
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
               </div>
             </motion.div>
           )}
@@ -203,6 +228,7 @@ export default function ForkApp() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="w-full max-w-md mx-auto text-center"
+              role="alert"
             >
               <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center">
@@ -210,8 +236,8 @@ export default function ForkApp() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                 </div>
-                <h2 className="text-xl font-semibold text-white">Couldn't get recommendations</h2>
-                <p className="text-white/40 text-sm">{error || 'The AI service is temporarily unavailable.'}</p>
+                <h2 className="text-xl font-semibold text-white">{errorInfo.title}</h2>
+                <p className="text-white/40 text-sm">{errorInfo.suggestion}</p>
                 <div className="flex gap-3 mt-2">
                   <motion.button
                     onClick={() => handleWizardComplete(lastSelections)}
@@ -261,6 +287,16 @@ export default function ForkApp() {
                 </p>
               </div>
               <ComparisonGrid products={products} filters={filters} onSelect={setSelected} />
+              <div className="text-center mt-10">
+                <motion.button
+                  onClick={() => setPhase('steps')}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-6 py-3 bg-white/[0.06] border border-white/[0.1] text-white/70 font-medium rounded-xl hover:bg-white/[0.1] transition-all duration-300 cursor-pointer"
+                >
+                  Edit Preferences
+                </motion.button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

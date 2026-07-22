@@ -28,7 +28,7 @@ export function mapAPIProducts(apiProducts: APIProduct[]): Product[] {
       forWho: p.reason,
       specs: p.specs ?? [],
       tradeoff: p.tradeoff ?? '',
-      buyLink: `https://www.google.com/search?q=${encodeURIComponent(p.name)}+buy`,
+      buyLink: `https://www.google.com/search?q=${encodeURIComponent(p.name)}+buy+online`,
     };
   });
 }

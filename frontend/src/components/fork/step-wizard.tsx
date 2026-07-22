@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { filterOptions } from '@/lib/fork-data';
 
@@ -34,27 +34,56 @@ export default function StepWizard({ onComplete }: StepWizardProps) {
   const [current, setCurrent] = useState(0);
   const [selections, setSelections] = useState<Record<string, string>>({});
   const [direction, setDirection] = useState(1);
+  const processingRef = useRef(false);
 
   const step = steps[current];
 
-  const select = (value: string) => {
+  const select = useCallback((value: string) => {
+    if (processingRef.current) return;
+    processingRef.current = true;
+
     const next = { ...selections, [step.key]: value };
     setSelections(next);
 
     if (current < steps.length - 1) {
       setDirection(1);
-      setTimeout(() => setCurrent((c) => c + 1), 300);
+      setTimeout(() => {
+        setCurrent((c) => c + 1);
+        processingRef.current = false;
+      }, 300);
     } else {
       setTimeout(() => onComplete(next), 400);
     }
-  };
+  }, [current, selections, step.key, onComplete]);
 
-  const goBack = () => {
+  const goBack = useCallback(() => {
     if (current > 0) {
       setDirection(-1);
       setCurrent((c) => c - 1);
     }
-  };
+  }, [current]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const options = step.options;
+        const currentIndex = options.findIndex((o) => o.value === selections[step.key]);
+        let nextIndex: number;
+        if (e.key === 'ArrowDown') {
+          nextIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
+        } else {
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
+        }
+        select(options[nextIndex].value);
+      }
+      if (e.key === 'Backspace' || e.key === 'Escape') {
+        goBack();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [step, selections, select, goBack]);
 
   const variants = {
     enter: (d: number) => ({ x: d > 0 ? 80 : -80, opacity: 0 }),
@@ -63,9 +92,9 @@ export default function StepWizard({ onComplete }: StepWizardProps) {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4">
+    <div className="w-full max-w-2xl mx-auto px-4" role="group" aria-label={`Step ${current + 1} of ${steps.length}: ${step.title}`}>
       {/* Progress bar */}
-      <div className="flex items-center gap-2 mb-12">
+      <div className="flex items-center gap-2 mb-12" role="progressbar" aria-valuenow={current + 1} aria-valuemin={1} aria-valuemax={steps.length}>
         {steps.map((_, i) => (
           <div key={i} className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/[0.06]">
             <motion.div
@@ -82,6 +111,7 @@ export default function StepWizard({ onComplete }: StepWizardProps) {
       <div className="flex items-center justify-between mb-8">
         <button
           onClick={goBack}
+          aria-label="Go to previous step"
           className={`flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors cursor-pointer ${current === 0 ? 'invisible' : ''}`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,18 +136,20 @@ export default function StepWizard({ onComplete }: StepWizardProps) {
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="text-center mb-10">
-            <span className="text-4xl mb-4 block">{step.icon}</span>
+            <span className="text-4xl mb-4 block" aria-hidden="true">{step.icon}</span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">{step.title}</h2>
             <p className="mt-2 text-white/40 text-sm sm:text-base">{step.subtitle}</p>
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-3" role="radiogroup" aria-label={step.title}>
             {step.options.map((opt) => {
               const selected = selections[step.key] === opt.value;
               return (
                 <motion.button
                   key={opt.value}
                   onClick={() => select(opt.value)}
+                  role="radio"
+                  aria-checked={selected}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={`relative w-full py-5 px-6 rounded-2xl text-left font-medium transition-all duration-300 cursor-pointer border ${

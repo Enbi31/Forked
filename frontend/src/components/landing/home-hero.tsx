@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion';
 import { useLenis } from 'lenis/react';
 
-import logo from '@/assets/New_Project-Photoroom.png';
-
 const ease = [0.16, 1, 0.3, 1] as const;
 const fadeUp = (y = 20, delay = 0) => ({
   initial: { opacity: 0, y },

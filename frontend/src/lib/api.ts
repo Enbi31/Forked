@@ -13,6 +13,20 @@ interface APIResponse {
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api';
 
+export class TimeoutError extends Error {
+  constructor() {
+    super('Request timed out. The AI service is taking too long to respond.');
+    this.name = 'TimeoutError';
+  }
+}
+
+export class NetworkError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'NetworkError';
+  }
+}
+
 export async function fetchRecommendations(params: {
   query: string;
   price: string;
@@ -26,24 +40,39 @@ export async function fetchRecommendations(params: {
     preference: params.feature,
   };
 
-  const res = await fetch(`${API_BASE}/recommend`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`API error ${res.status}: ${text}`);
+  try {
+    const res = await fetch(`${API_BASE}/recommend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new NetworkError(`API error ${res.status}: ${text}`);
+    }
+
+    const data: APIResponse = await res.json();
+
+    if (!data.products || !Array.isArray(data.products)) {
+      throw new NetworkError('Invalid API response shape');
+    }
+
+    return data.products;
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new TimeoutError();
+    }
+    if (err instanceof NetworkError) throw err;
+    if (err instanceof TimeoutError) throw err;
+    throw new NetworkError(err instanceof Error ? err.message : 'Network request failed');
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  const data: APIResponse = await res.json();
-
-  if (!data.products || !Array.isArray(data.products)) {
-    throw new Error('Invalid API response shape');
-  }
-
-  return data.products;
 }
 
 function budgetToNumber(level: string): number {
