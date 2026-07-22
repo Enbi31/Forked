@@ -1,8 +1,18 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.recommend import router
 
-app = FastAPI()
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+
+app = FastAPI(
+    title="Forked API",
+    description="AI-powered product recommendation engine",
+    version="1.0.0",
+)
 
 app.add_middleware(
     CORSMiddleware,
