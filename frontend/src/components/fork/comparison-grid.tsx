@@ -17,12 +17,13 @@ export default function ComparisonGrid({ products, filters, onSelect }: {
   };
 
   const sorted = [...products].sort((a, b) => score(b) - score(a));
+  const maxScore = sorted.length ? Math.max(...sorted.map(score)) : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {sorted.map((p, i) => {
         const matchScore = score(p);
-        const best = matchScore === Math.max(...sorted.map(score));
+        const best = matchScore === maxScore;
         return (
           <motion.div
             key={p.id}

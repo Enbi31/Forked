@@ -11,6 +11,8 @@ export interface APIResponse {
   products: APIProduct[];
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE ?? '/api';
+
 export async function fetchRecommendations(params: {
   query: string;
   price: string;
@@ -22,10 +24,9 @@ export async function fetchRecommendations(params: {
     budget: budgetToNumber(params.price),
     priority: params.utility,
     preference: params.feature,
-    deal: '',
   };
 
-  const res = await fetch('/api/recommend', {
+  const res = await fetch(`${API_BASE}/recommend`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

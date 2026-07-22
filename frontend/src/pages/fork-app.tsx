@@ -19,6 +19,7 @@ export default function ForkApp() {
   const [selected, setSelected] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState('');
+  const [lastSelections, setLastSelections] = useState<Record<string, string>>({});
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +29,7 @@ export default function ForkApp() {
   const handleWizardComplete = async (selections: Record<string, string>) => {
     setPhase('loading');
     setError('');
+    setLastSelections(selections);
 
     try {
       const apiProducts = await fetchRecommendations({
@@ -59,6 +61,7 @@ export default function ForkApp() {
     setFilters({ price: [], utility: [], feature: [] });
     setProducts([]);
     setError('');
+    setLastSelections({});
   };
 
   return (
@@ -189,16 +192,20 @@ export default function ForkApp() {
                 <p className="text-white/40 text-sm">{error || 'The AI service is temporarily unavailable.'}</p>
                 <div className="flex gap-3 mt-2">
                   <motion.button
-                    onClick={() => handleWizardComplete({
-                      price: filters.price[0] ?? '',
-                      utility: filters.utility[0] ?? '',
-                      feature: filters.feature[0] ?? '',
-                    })}
+                    onClick={() => handleWizardComplete(lastSelections)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="px-6 py-3 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white font-semibold rounded-xl glow-button transition-all duration-300 cursor-pointer"
                   >
                     Try Again
+                  </motion.button>
+                  <motion.button
+                    onClick={() => setPhase('steps')}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-6 py-3 bg-white/[0.06] border border-white/[0.1] text-white/70 font-medium rounded-xl hover:bg-white/[0.1] transition-all duration-300 cursor-pointer"
+                  >
+                    Change Preferences
                   </motion.button>
                   <motion.button
                     onClick={restart}
