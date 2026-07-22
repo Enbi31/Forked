@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import ProductCard from './product-card';
-import { dummyProducts, tierFilterMap, type Product } from '@/lib/fork-data';
+import { tierFilterMap, type Product } from '@/lib/fork-data';
 
-export default function ComparisonGrid({ filters, onSelect }: {
+export default function ComparisonGrid({ products, filters, onSelect }: {
+  products: Product[];
   filters: Record<string, string[]>;
   onSelect: (product: Product) => void;
 }) {
@@ -11,11 +12,11 @@ export default function ComparisonGrid({ filters, onSelect }: {
   const score = (p: Product) => {
     if (!active.length) return 3;
     const m = tierFilterMap[p.tier];
+    if (!m) return 0;
     return [m.price, m.utility, m.feature].filter((v) => active.includes(v)).length;
   };
 
-  // Sort by match score (best first)
-  const sorted = [...dummyProducts].sort((a, b) => score(b) - score(a));
+  const sorted = [...products].sort((a, b) => score(b) - score(a));
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

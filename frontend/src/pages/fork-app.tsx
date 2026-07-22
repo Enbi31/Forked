@@ -5,9 +5,11 @@ import StepWizard from '@/components/fork/step-wizard';
 import ComparisonGrid from '@/components/fork/comparison-grid';
 import SelectionModal from '@/components/fork/selection-modal';
 import type { Product } from '@/lib/fork-data';
+import { fetchRecommendations } from '@/lib/api';
+import { mapAPIProducts } from '@/lib/mapper';
 import logo from '@/assets/New_Project-Photoroom.png';
 
-type Phase = 'search' | 'steps' | 'results';
+type Phase = 'search' | 'steps' | 'loading' | 'results' | 'error';
 
 export default function ForkApp() {
   const [, navigate] = useLocation();
@@ -15,25 +17,48 @@ export default function ForkApp() {
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<Record<string, string[]>>({ price: [], utility: [], feature: [] });
   const [selected, setSelected] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [error, setError] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) setPhase('steps');
   };
 
-  const handleWizardComplete = (selections: Record<string, string>) => {
-    setFilters({
-      price: selections.price ? [selections.price] : [],
-      utility: selections.utility ? [selections.utility] : [],
-      feature: selections.feature ? [selections.feature] : [],
-    });
-    setPhase('results');
+  const handleWizardComplete = async (selections: Record<string, string>) => {
+    setPhase('loading');
+    setError('');
+
+    try {
+      const apiProducts = await fetchRecommendations({
+        query,
+        price: selections.price ?? '',
+        utility: selections.utility ?? '',
+        feature: selections.feature ?? '',
+      });
+
+      const mapped = mapAPIProducts(apiProducts);
+      setProducts(mapped);
+
+      setFilters({
+        price: selections.price ? [selections.price] : [],
+        utility: selections.utility ? [selections.utility] : [],
+        feature: selections.feature ? [selections.feature] : [],
+      });
+
+      setPhase('results');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setPhase('error');
+    }
   };
 
   const restart = () => {
     setPhase('search');
     setQuery('');
     setFilters({ price: [], utility: [], feature: [] });
+    setProducts([]);
+    setError('');
   };
 
   return (
@@ -124,7 +149,71 @@ export default function ForkApp() {
             </motion.div>
           )}
 
-          {/* Phase 3: Results */}
+          {/* Phase 3: Loading */}
+          {phase === 'loading' && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-2xl mx-auto text-center"
+            >
+              <div className="flex flex-col items-center gap-6">
+                <div className="w-12 h-12 border-2 border-[#A855F7] border-t-transparent rounded-full animate-spin" />
+                <div>
+                  <p className="text-white/80 text-lg font-medium">Finding the best options for you...</p>
+                  <p className="text-white/30 text-sm mt-1">This usually takes just a few seconds.</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Phase 4: Error */}
+          {phase === 'error' && (
+            <motion.div
+              key="error"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-md mx-auto text-center"
+            >
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-semibold text-white">Couldn't get recommendations</h2>
+                <p className="text-white/40 text-sm">{error || 'The AI service is temporarily unavailable.'}</p>
+                <div className="flex gap-3 mt-2">
+                  <motion.button
+                    onClick={() => handleWizardComplete({
+                      price: filters.price[0] ?? '',
+                      utility: filters.utility[0] ?? '',
+                      feature: filters.feature[0] ?? '',
+                    })}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-6 py-3 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white font-semibold rounded-xl glow-button transition-all duration-300 cursor-pointer"
+                  >
+                    Try Again
+                  </motion.button>
+                  <motion.button
+                    onClick={restart}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-6 py-3 bg-white/[0.06] border border-white/[0.1] text-white/70 font-medium rounded-xl hover:bg-white/[0.1] transition-all duration-300 cursor-pointer"
+                  >
+                    Start Over
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Phase 5: Results */}
           {phase === 'results' && (
             <motion.div
               key="results"
@@ -142,7 +231,7 @@ export default function ForkApp() {
                   We picked these just for you. Compare and choose.
                 </p>
               </div>
-              <ComparisonGrid filters={filters} onSelect={setSelected} />
+              <ComparisonGrid products={products} filters={filters} onSelect={setSelected} />
             </motion.div>
           )}
         </AnimatePresence>
