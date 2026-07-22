@@ -1,32 +1,24 @@
 import ProductCard from './product-card';
 import { dummyProducts, tierFilterMap, type Product } from '@/lib/fork-data';
 
-interface ComparisonGridProps {
+export default function ComparisonGrid({ filters, onSelect }: {
   filters: Record<string, string[]>;
   onSelect: (product: Product) => void;
-}
+}) {
+  const active = [...(filters.price || []), ...(filters.utility || []), ...(filters.feature || [])];
 
-export default function ComparisonGrid({ filters, onSelect }: ComparisonGridProps) {
-  const activeFilters = [
-    ...(filters.price || []),
-    ...(filters.utility || []),
-    ...(filters.feature || []),
-  ];
-
-  const getOpacity = (product: Product) => {
-    if (activeFilters.length === 0) return 'opacity-100';
-    const map = tierFilterMap[product.tier];
-    const matches = activeFilters.some(
-      (f) => f === map.price || f === map.utility || f === map.feature,
-    );
-    return matches ? 'opacity-100' : 'opacity-40';
+  const opacity = (p: Product) => {
+    if (!active.length) return 'opacity-100';
+    const m = tierFilterMap[p.tier];
+    return active.some((f) => f === m.price || f === m.utility || f === m.feature)
+      ? 'opacity-100' : 'opacity-40';
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-      {dummyProducts.map((product, i) => (
-        <div key={product.id} className={getOpacity(product)}>
-          <ProductCard product={product} index={i} onSelect={onSelect} />
+      {dummyProducts.map((p, i) => (
+        <div key={p.id} className={opacity(p)}>
+          <ProductCard product={p} index={i} onSelect={onSelect} />
         </div>
       ))}
     </div>

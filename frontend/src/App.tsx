@@ -3,7 +3,7 @@ import { Router, Route } from 'wouter';
 import Home from './pages/home';
 import ForkApp from './pages/fork-app';
 
-function App() {
+export default function App() {
   return (
     <ReactLenis root>
       <Router>
@@ -13,5 +13,3 @@ function App() {
     </ReactLenis>
   );
 }
-
-export default App;

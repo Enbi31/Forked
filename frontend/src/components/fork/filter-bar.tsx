@@ -1,23 +1,18 @@
 import { filterOptions } from '@/lib/fork-data';
 
-interface FilterBarProps {
-  filters: Record<string, string[]>;
-  onFilterChange: (group: string, values: string[]) => void;
-}
-
-const groupLabels: Record<string, string> = {
+const labels: Record<string, string> = {
   price: 'Price Range',
   utility: 'Utility / Use Case',
   feature: 'Key Feature',
 };
 
-export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
+export default function FilterBar({ filters, onFilterChange }: {
+  filters: Record<string, string[]>;
+  onFilterChange: (group: string, values: string[]) => void;
+}) {
   const toggle = (group: string, value: string) => {
-    const current = filters[group] || [];
-    const next = current.includes(value)
-      ? current.filter((v) => v !== value)
-      : [...current, value];
-    onFilterChange(group, next);
+    const cur = filters[group] || [];
+    onFilterChange(group, cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value]);
   };
 
   return (
@@ -25,7 +20,7 @@ export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
       {Object.entries(filterOptions).map(([group, options]) => (
         <div key={group}>
           <p className="text-sm font-medium text-zinc-400 mb-3 uppercase tracking-wider">
-            {groupLabels[group]}
+            {labels[group]}
           </p>
           <div className="flex flex-wrap gap-2">
             {options.map((opt) => {
