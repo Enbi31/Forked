@@ -6,5 +6,5 @@ NYC hackathon
 
 ```
 frontend/   - React + Vite + TypeScript frontend (Tailwind CSS, shadcn/ui, Framer Motion)
-backend/    - Backend API (coming soon)
+backend/    - Python + Groq_api_key
 ```
