@@ -26,7 +26,7 @@ export default function HeroSection({ onSearch }: HeroSectionProps) {
         className="relative z-10 max-w-2xl mx-auto w-full"
       >
         <div className="flex items-center justify-center gap-2 mb-4">
-          <span className="text-3xl">⚡</span>
+          <span className="text-3xl"></span>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white">
             Fork
           </h1>
