@@ -8,7 +8,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-[#07070B] px-4 py-24">
+    <section id="how-it-works" className="bg-[#07070B] px-4 py-24">
       <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-16">
         How <span className="text-gradient">Fork</span> Works
       </h2>
