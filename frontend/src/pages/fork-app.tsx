@@ -121,7 +121,7 @@ export default function ForkApp() {
                   <input
                     type="text"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
                     placeholder="e.g. Laptop for JEE prep and light gaming"
                     className="w-full pl-14 pr-5 py-5 bg-white/[0.04] border border-white/[0.08] rounded-2xl text-white placeholder-white/25 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/40 focus:border-[#7C3AED]/40 transition-all"
                   />

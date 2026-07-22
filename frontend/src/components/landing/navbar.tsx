@@ -1,5 +1,4 @@
 import { useLocation } from 'wouter';
-import { Twitter, Github } from 'lucide-react';
 import logo from '@/assets/New_Project-Photoroom.png';
 
 export default function Navbar() {

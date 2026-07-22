@@ -7,7 +7,7 @@ export interface APIProduct {
   category_tier: 'budget' | 'balanced' | 'powerhouse';
 }
 
-export interface APIResponse {
+interface APIResponse {
   products: APIProduct[];
 }
 
