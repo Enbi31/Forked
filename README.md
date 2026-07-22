@@ -1,34 +1,36 @@
-# Axen
+# Fork — Choice Range Reducer
 
-NYC hackathon project — a modern digital platform.
+NYC Hackathon 2026 — Eliminate decision fatigue by limiting options to exactly 3 choices.
 
 ## Project Structure
 
 ```
-<<<<<<< HEAD
-frontend/   - React 19 + Vite 8 + TypeScript frontend
+frontend/   - React 19 + Vite 8 + TypeScript (Tailwind v4, shadcn, Framer Motion)
   src/
-    pages/          - Route page components
-    components/     - Reusable UI components
-      landing/      - Landing page components (HeroSection, Navbar)
-    App.tsx         - Root component with wouter routing
-    main.tsx        - Entry point
-=======
-frontend/   - React + Vite + TypeScript frontend (Tailwind CSS, shadcn/ui, Framer Motion)
-backend/    - Python + Groq_api_key
->>>>>>> 7666ff28e7c719ce98d1c24dd5ada69d84765ad4
+    pages/
+      home.tsx          - Product marketing homepage
+      fork-app.tsx      - The fork tool (search → filters → comparison → select)
+    components/
+      landing/          - Navbar, HeroSection, HomeHero, HowItWorks, Footer
+      fork/             - FilterBar, ProductCard, ComparisonGrid, SelectionModal
+    lib/
+      fork-data.ts      - Product types, dummy data, filter options
+    App.tsx             - wouter routing (/ → marketing, /app → tool)
+    main.tsx            - Entry point (Poppins Medium 500)
+    index.css           - Tailwind v4 + shadcn + custom utilities (noise, glass, glow)
+backend/    - Backend API (coming soon)
 ```
 
 ## Tech Stack
 
-- **React 19** with TypeScript
-- **Vite 8** for bundling
-- **Tailwind CSS v4** for styling
-- **Framer Motion** for animations
-- **wouter** for routing
-- **shadcn/ui** + **Base UI** for components
-- **Lucide** for icons
-- **Geist Variable** font
+- **React 19** + **TypeScript**
+- **Vite 8** bundler
+- **Tailwind CSS v4** styling
+- **Framer Motion** animations
+- **wouter** routing
+- **shadcn/ui** + **Base UI** primitives
+- **Poppins Medium** (500) font
+- **Lucide React** icons
 
 ## Getting Started
 
@@ -42,7 +44,14 @@ npm run dev
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start dev server |
+| `npm run dev` | Start dev server at `localhost:5173` |
 | `npm run build` | Build for production |
 | `npm run lint` | Run ESLint |
 | `npm run preview` | Preview production build |
+
+## Routes
+
+| Path | Page | Purpose |
+|------|------|---------|
+| `/` | Home | Product marketing landing page |
+| `/app` | ForkApp | The choice range reducer tool |
