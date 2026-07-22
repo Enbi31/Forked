@@ -14,3 +14,11 @@ def get_ai_recommendation(user_data):
             {"role": "user", "content": json.dumps(user_data)}]
     )
     return json.loads(response.choices[0].message.content)
+
+def add_buy_links(product):
+    for prod in product:
+        prod["buy_link"]=(
+            f"https://www.google.com/search?q={quote_plus(prod["name"])}+buy"
+        )
+        return product
+
