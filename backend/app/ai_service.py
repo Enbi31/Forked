@@ -1,8 +1,8 @@
 from groq import Groq
 import json
 
-from connection import settings
-from prompt import SYSTEM_PROMPT
+from app.connection import settings
+from app.prompt import SYSTEM_PROMPT
 
 client = Groq(api_key=settings.GROQ_API_KEY)
 
